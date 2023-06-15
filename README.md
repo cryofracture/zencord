@@ -1,0 +1,1 @@
+# ZenCord Bot - a ZenDesk Discord bot integration for Casper Labs
