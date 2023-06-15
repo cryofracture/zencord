@@ -36,7 +36,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='$', intents=intents)
 
-
+active_tickets = {}
 
 
 @bot.event
@@ -64,16 +64,25 @@ async def support_ticket_command(ctx, *args):
         )
         subject_response = await bot.wait_for('message', check=lambda m: m.author == ctx.author)
         subject = subject_response.content
+
+        # await ctx.author.send(
+        #     f"Please provide your email address: "
+        # )
+        # email_response = await bot.wait_for('message', check=lambda m: m.author == ctx.author)
+        # email = email_response.content
+
         try:
-            new_ticket = open_new_ticket(description, subject, ctx.author.name)
+            new_ticket = open_new_ticket(description, subject, ctx.author.name, email)
         except Exception as e:
             print(e)
         await ctx.author.send(
             f"All right, {ctx.author.name}, I have created a new ticket for you and the Casper Labs Support team will begin reviewing your issue and get back to you soon."
         )
         await ctx.author.send(
-            f"The new ticket ID is {new_ticket}"
+            f"The new ticket ID is {new_ticket}. You can check for updates to the ticket from the support team using the command: $get_ticket_updates"
         )
+        user_id = ctx.author.id
+        active_tickets[new_ticket] = user_id
     else:
         await ctx.author.send("Okay, please re-enter your issue description if you'd like to open a support ticket.")
 
@@ -122,11 +131,6 @@ async def update_ticket_command(ctx):
         await ctx.send("Please provide a valid ticket ID.")
         return
 
-    # Check if the user is the requester of the provided ticket ID
-    if not has_active_ticket(ctx.author, ticket_id):
-        await ctx.send("You are not the requester of the provided ticket ID.")
-        return
-
     await ctx.author.send(f"You have requested to update support ticket #{ticket_id}. Please provide your update:")
     update_response = await bot.wait_for('message', check=lambda m: m.author == ctx.author)
     update_content = update_response.content
@@ -137,15 +141,6 @@ async def update_ticket_command(ctx):
     except Exception as e:
         print(e)
         await ctx.author.send("An error occurred while updating the support ticket. Please try again later.")
-
-
-# def has_active_ticket(user, ticket_id):
-#     # Implement your logic to check if the user has an active ticket
-#     # You can use a database or any other storage mechanism to track active tickets for each user
-#     # Return True if the user has an active ticket, False otherwise
-#     # For demonstration purposes, assume the user has an active ticket with ID 123
-#     active_ticket_id = 123
-#     return active_ticket_id is not None and active_ticket_id > 0
 
 
 async def update_ticket_comment(ticket_id: int, comment: str):
@@ -171,10 +166,5 @@ async def update_ticket_comment(ticket_id: int, comment: str):
         print("Comment updated successfully.")
     else:
         print("Failed to update comment.")
-
-
-# description = "This is a test of Zencord bot."
-# subject = "Taylor Test Ticket"
-# open_new_ticket(description, subject)
 
 bot.run(TOKEN)
