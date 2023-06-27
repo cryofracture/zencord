@@ -14,8 +14,8 @@ logger.setLevel(logging.INFO)
 
 # Create handlers
 current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-zencord_error_handler = logging.FileHandler(f"./zencord_bot_err_{current_date}.log")
-zencord_handler = logging.FileHandler(f"./zencord_bot_{current_date}.log")
+zencord_error_handler = logging.FileHandler(f"./logs/zencord_bot_err_{current_date}.log")
+zencord_handler = logging.FileHandler(f"./logs/zencord_bot_{current_date}.log")
 zencord_error_handler.setLevel(logging.ERROR)
 zencord_handler.setLevel(logging.INFO)
 

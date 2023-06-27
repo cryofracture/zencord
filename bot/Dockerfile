@@ -5,6 +5,7 @@ RUN apt-get upgrade -y
 
 # Set the working directory
 WORKDIR /zencord_bot
+RUN mkdir logs
 
 # Copy the requirements file and install dependencies
 COPY requirements.txt .
