@@ -74,7 +74,7 @@ async def support_ticket_command(ctx, *args):
         try:
             new_ticket = open_new_ticket(description, subject, ctx.author.name, email)
         except Exception as e:
-            print(e)
+            logger.error(e)
         await ctx.author.send(
             f"All right, {ctx.author.name}, I have created a new ticket for you and the Casper Labs Support team will begin reviewing your issue and get back to you soon."
         )
@@ -140,7 +140,7 @@ async def update_ticket_command(ctx):
         await update_ticket_comment(ticket_id, update_content)
         await ctx.author.send("Your update has been added to the support ticket.")
     except Exception as e:
-        print(e)
+        logger.error(e)
         await ctx.author.send("An error occurred while updating the support ticket. Please try again later.")
 
 
@@ -164,8 +164,8 @@ async def update_ticket_comment(ticket_id: int, comment: str):
     response = requests.put(url, auth=auth, headers=headers, json=body)
 
     if response.status_code == 200:
-        print("Comment updated successfully.")
+        logger.info("Comment updated successfully.")
     else:
-        print("Failed to update comment.")
+        logger.error("Failed to update comment.")
 
 bot.run(TOKEN)
